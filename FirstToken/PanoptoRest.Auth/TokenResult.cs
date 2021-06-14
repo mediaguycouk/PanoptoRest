@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace PanoptoRest.Auth
@@ -20,7 +20,17 @@ namespace PanoptoRest.Auth
         [JsonProperty("error_description")]
         public string ErrorDescription { get; set; }
 
-        public DateTime Created;
-        public DateTime Expires;    
+        public DateTime? Created;
+        public DateTime? Expires;
+
+        public bool IsValidOnCreation()
+        {
+            return string.IsNullOrEmpty(Error) && !string.IsNullOrEmpty(AccessToken) && ExpiresIn > 0;
+        }
+
+        public bool IsValidNow()
+        {
+            return (IsValidOnCreation() && Expires.HasValue && Expires.Value < DateTime.Now);
+        }
     }
 }
